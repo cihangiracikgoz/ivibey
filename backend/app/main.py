@@ -1,6 +1,13 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
+from app.db.database import engine
 
-app = FastAPI(title="iVibey API", version="1.0.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield
+    engine.dispose()
+
+app = FastAPI(title="iVibey API", version="1.0.0", lifespan=lifespan)
 
 @app.get("/")
 def health_check():
