@@ -21,6 +21,20 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     POSTGRES_PORT: int
 
+    SPOTIFY_CLIENT_ID: str
+    SPOTIFY_CLIENT_SECRET: str
+    SPOTIFY_REDIRECT_URI: str
+
+    JWT_SECRET: str
+    JWT_ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINS: int
+    REFRESH_TOKEN_EXPIRE_DAYS: int
+    
+    REDIS_HOST: str
+    REDIS_PORT: int
+
+    TOKEN_ENCRYPTION_KEY: str
+
     @computed_field
     @property
     def POSTGRES_URL(self) -> str:

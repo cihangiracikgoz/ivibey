@@ -1,22 +1,34 @@
-from fastapi import Depends
+import uuid
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from jwt.exceptions import InvalidTokenError
 
 from app.db.database import get_db
 from app.models.user import User
+from app.core.security import decode_token
 
-DEV_SPOTIFY_ID = 'dev_user_spotify_id'
+bearer = HTTPBearer()
 
-def get_current_user(db: Session = Depends(get_db)) -> User:
+def get_current_user(
+        creds: HTTPAuthorizationCredentials = Depends(bearer),
+        db: Session = Depends(get_db)
+    ) -> User:
+    try:
+        payload = decode_token(creds.credentials)
+    except InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    if payload.get("type") != "access":
+        raise HTTPException(status_code=401, detail="Invalid token type")
+    
     user = db.scalar(
         select(User)
-        .where(User.spotify_id == DEV_SPOTIFY_ID)
+        .where(User.id == uuid.UUID(payload["sub"]))
     )
 
     if not user:
-        user = User(spotify_id=DEV_SPOTIFY_ID, display_name='Dev User')
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-
+        raise HTTPException(status_code=401, detail="User not found")
+    
     return user
