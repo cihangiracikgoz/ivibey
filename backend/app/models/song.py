@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from app.db.database import Base
 
@@ -18,6 +18,9 @@ class Song(Base):
     spotify_track_id: Mapped[str] = mapped_column(String(255), nullable=False)
     playlist_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("playlists.id", ondelete="CASCADE"), nullable=False, index=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
+    artist: Mapped[str] = mapped_column(String(255), nullable=False)
+    duration_ms: Mapped[int] = mapped_column(nullable=False)
+    image_url: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     position: Mapped[int] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

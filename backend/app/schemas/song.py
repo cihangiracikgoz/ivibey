@@ -9,6 +9,9 @@ class SongRead(BaseModel):
     spotify_track_id: str
     playlist_id: uuid.UUID
     name: str
+    artist: str
+    duration_ms: int
+    image_url: Optional[str] = None
     position: int
     created_at: datetime
     updated_at: datetime
@@ -18,9 +21,10 @@ class SongRead(BaseModel):
 class SongCreate(BaseModel):
     spotify_track_id: str
     name: str
+    artist: str
+    duration_ms: int
+    image_url: Optional[str] = None
     position: int
 
 class SongUpdate(BaseModel):
-    spotify_track_id: Optional[str] = None
-    name: Optional[str] = None
     position: Optional[int] = None
